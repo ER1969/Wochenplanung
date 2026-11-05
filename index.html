@@ -1,183 +1,332 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JR99 Planungstool</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html, body {
-            height: 100%;
-            width: 100%;
-            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Dezente animierte Hintergrund-Kreise */
-        body::before,
-        body::after {
-            content: '';
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.4;
-            z-index: 0;
-        }
-
-        body::before {
-            width: 500px;
-            height: 500px;
-            background: #3b82f6;
-            top: -150px;
-            left: -150px;
-            animation: float 12s ease-in-out infinite;
-        }
-
-        body::after {
-            width: 600px;
-            height: 600px;
-            background: #8b5cf6;
-            bottom: -200px;
-            right: -200px;
-            animation: float 15s ease-in-out infinite reverse;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(30px, -30px); }
-        }
-
-        .container {
-            position: relative;
-            z-index: 1;
-            text-align: center;
-            padding: 3rem 2.5rem;
-            max-width: 700px;
-            width: 90%;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 24px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            animation: fadeIn 1.2s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .icon {
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-            display: inline-block;
-            animation: pulse 2.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        h1 {
-            font-size: clamp(1.5rem, 4vw, 2.25rem);
-            font-weight: 700;
-            color: #ffffff;
-            line-height: 1.3;
-            margin-bottom: 1rem;
-            letter-spacing: -0.02em;
-        }
-
-        h1 .highlight {
-            background: linear-gradient(90deg, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: transparent;
-        }
-
-        p {
-            font-size: clamp(1rem, 2vw, 1.15rem);
-            color: rgba(226, 232, 240, 0.8);
-            line-height: 1.6;
-            margin-bottom: 2rem;
-        }
-
-        .divider {
-            width: 60px;
-            height: 4px;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-            border-radius: 2px;
-            margin: 0 auto 2rem;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.5rem 1.25rem;
-            background: rgba(59, 130, 246, 0.15);
-            border: 1px solid rgba(96, 165, 250, 0.4);
-            border-radius: 999px;
-            color: #93c5fd;
-            font-size: 0.85rem;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-
-        .badge span {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background: #60a5fa;
-            border-radius: 50%;
-            margin-right: 0.5rem;
-            animation: blink 1.5s ease-in-out infinite;
-            vertical-align: middle;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 2rem 1.5rem;
-                border-radius: 18px;
-            }
-            .icon {
-                font-size: 2.75rem;
-            }
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planung &amp; Einkauf</title>
+<style>
+  :root { --g:#1b6b4a; --gl:#e6f4ec; --o:#e65100; --bg:#f5f7f6; --t:#1d2b25; --line:#dfe6e2; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:Arial,Helvetica,sans-serif; font-size:19px; line-height:1.45; background:var(--bg); color:var(--t); }
+  header { background:var(--g); color:#fff; padding:14px 20px; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+  header h1 { margin:0; font-size:26px; }
+  header p { margin:2px 0 0; opacity:.9; font-size:16px; }
+  header button { font-size:16px; padding:8px 14px; border:2px solid #fff; border-radius:8px; background:transparent; color:#fff; font-weight:bold; cursor:pointer; }
+  main { max-width:860px; margin:0 auto; padding:16px; }
+  nav { display:flex; gap:6px; padding:10px; background:#dfe9e4; position:sticky; top:0; z-index:5; flex-wrap:wrap; }
+  nav button { flex:1; min-width:110px; font-size:18px; padding:12px 8px; border:0; border-radius:10px; background:#fff; color:var(--g); font-weight:bold; cursor:pointer; }
+  nav button.on { background:var(--g); color:#fff; }
+  h2 { font-size:23px; margin:10px 0 12px; color:var(--g); }
+  h3 { font-size:20px; margin:20px 0 8px; color:var(--g); }
+  .card { background:#fff; border-radius:14px; padding:6px 16px; margin-bottom:14px; box-shadow:0 2px 6px rgba(0,0,0,.08); }
+  .item { display:flex; align-items:flex-start; gap:14px; padding:12px 0; border-bottom:1px solid #eef1ef; }
+  .item:last-child { border-bottom:0; }
+  .item input[type=checkbox] { width:28px; height:28px; flex-shrink:0; margin-top:2px; accent-color:var(--g); }
+  .item .body { flex:1; min-width:0; }
+  .item.done .txt { text-decoration:line-through; opacity:.5; }
+  .item .cmt { width:100%; margin-top:6px; font-size:16px; padding:6px 10px; border:1px solid #cfdcd5; border-radius:8px; font-family:inherit; background:#fafcfb; }
+  .note { background:var(--gl); border-left:6px solid var(--g); padding:12px 16px; border-radius:10px; margin:12px 0; }
+  .warn { background:#fff3e0; border-left-color:var(--o); }
+  .btn { font-size:18px; padding:12px 18px; border:0; border-radius:12px; background:var(--g); color:#fff; font-weight:bold; cursor:pointer; margin:6px 6px 6px 0; }
+  .btn.sec { background:#fff; color:var(--g); border:2px solid var(--g); }
+  .btn.red { background:#fff; color:#b71c1c; border:2px solid #b71c1c; }
+  .add { display:flex; gap:8px; margin:10px 0; }
+  .add input, .add select, textarea, .prow input, .prow select { font-size:18px; padding:10px; border:2px solid #b7c9c0; border-radius:10px; font-family:inherit; }
+  .add input { flex:1; }
+  textarea { width:100%; }
+  .small { font-size:15px; opacity:.75; }
+  .prow { display:flex; gap:8px; flex-wrap:wrap; align-items:center; padding:10px 0; border-bottom:1px solid #eef1ef; }
+  .prow input { flex:1; min-width:90px; }
+  .prow select { flex:0 0 auto; }
+  .prow .res { font-size:15px; color:var(--g); font-weight:bold; width:100%; }
+  .prow .hint { font-size:14px; color:var(--o); width:100%; }
+  .moods button { font-size:18px; padding:12px 18px; border:2px solid #cfdcd5; border-radius:12px; background:#fff; cursor:pointer; margin:4px 6px 4px 0; font-weight:bold; }
+  .moods button.on { border-color:var(--g); background:var(--gl); }
+  .loginbox { max-width:420px; margin:60px auto; background:#fff; border-radius:16px; padding:24px; box-shadow:0 2px 10px rgba(0,0,0,.1); }
+  .loginbox h2 { margin-top:0; }
+  .loginbox input { width:100%; font-size:18px; padding:12px; border:2px solid #b7c9c0; border-radius:10px; margin:8px 0; }
+  .err { color:#b71c1c; font-weight:bold; min-height:22px; }
+  .ok { color:var(--g); font-weight:bold; }
+  .hidden { display:none !important; }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="icon">📋</div>
-        <div class="divider"></div>
-        <h1>Hier kommt demnächst das<br><span class="highlight">Planungstool für JR99</span></h1>
-        <p>Wir arbeiten gerade mit Hochdruck an einer modernen Lösung für deine Planung. Schau bald wieder vorbei!</p>
-        <div class="badge"><span></span>In Arbeit</div>
+
+<div id="login-view">
+  <div class="loginbox">
+    <h2>Planung &amp; Einkauf</h2>
+    <p class="small">Bitte anmelden.</p>
+    <div id="login-form">
+      <input id="li-email" type="email" placeholder="E-Mail" autocomplete="email">
+      <input id="li-pass" type="password" placeholder="Passwort" autocomplete="current-password">
+      <div class="err" id="li-err"></div>
+      <button class="btn" id="li-go">Anmelden</button>
+      <button class="btn sec" id="li-show-reg">Neu registrieren</button>
     </div>
+    <div id="reg-form" class="hidden">
+      <p class="small">Registrierung als Betreuer. Projektname und Anschrift werden für den eigenen Bereich benötigt.</p>
+      <input id="rg-name" type="text" placeholder="Ihr Name">
+      <input id="rg-email" type="email" placeholder="E-Mail">
+      <input id="rg-pass" type="password" placeholder="Passwort (min. 6 Zeichen)" autocomplete="new-password">
+      <input id="rg-projekt" type="text" placeholder="Projektname (z. B. Jannick – selbstständiges Wohnen)">
+      <input id="rg-anschrift" type="text" placeholder="Anschrift">
+      <div class="err" id="rg-err"></div>
+      <button class="btn" id="rg-go">Registrieren</button>
+      <button class="btn sec" id="rg-back">Zurück zur Anmeldung</button>
+    </div>
+  </div>
+</div>
+
+<div id="app-view" class="hidden">
+  <header>
+    <div>
+      <h1>Planung &amp; Einkauf</h1>
+      <p id="sub">Meine Übersicht</p>
+    </div>
+    <button id="logout">Abmelden</button>
+  </header>
+  <nav id="tabs"></nav>
+  <main id="app"></main>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPABASE_URL = 'https://tpmjlrxmzjzcohudsegr.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_DCTzSlqzCehAPzkzDfmleQ_LgDC76iL';
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const app = document.getElementById('app');
+const tabsEl = document.getElementById('tabs');
+let profile = null;
+let tab = 'heute';
+let S = { items: [], prices: [], heute: [], mood: null };
+
+function el(tag, cls, txt){ const e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; }
+function p2(n){ return (n<10?'0':'')+n; }
+function dkey(d){ return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate()); }
+function msg(id, text, ok){ const e = document.getElementById(id); if (e){ e.textContent = text; e.className = ok ? 'ok' : 'err'; } }
+async function log(aktion, alt, neu){
+  try { await supabase.from('audit_log').insert({ tenant_id: profile.tenant_id, user_id: profile.id, aktion, alt: alt||null, neu: neu||null }); } catch(e){}
+}
+
+/* ---------- Login / Registrierung ---------- */
+document.getElementById('li-show-reg').onclick = () => {
+  document.getElementById('login-form').classList.add('hidden');
+  document.getElementById('reg-form').classList.remove('hidden');
+};
+document.getElementById('rg-back').onclick = () => {
+  document.getElementById('reg-form').classList.add('hidden');
+  document.getElementById('login-form').classList.remove('hidden');
+};
+document.getElementById('li-go').onclick = async () => {
+  msg('li-err','');
+  const email = document.getElementById('li-email').value.trim();
+  const pass = document.getElementById('li-pass').value;
+  if (!email || !pass){ msg('li-err','Bitte E-Mail und Passwort eingeben.'); return; }
+  const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+  if (error){ msg('li-err', error.message); return; }
+  await start();
+};
+document.getElementById('rg-go').onclick = async () => {
+  msg('rg-err','');
+  const name = document.getElementById('rg-name').value.trim();
+  const email = document.getElementById('rg-email').value.trim();
+  const pass = document.getElementById('rg-pass').value;
+  const projektname = document.getElementById('rg-projekt').value.trim();
+  const anschrift = document.getElementById('rg-anschrift').value.trim();
+  if (!name || !email || !pass || !projektname || !anschrift){ msg('rg-err','Bitte alle Felder ausfüllen.'); return; }
+  if (pass.length < 6){ msg('rg-err','Passwort mindestens 6 Zeichen.'); return; }
+  const { error } = await supabase.auth.signUp({
+    email, password: pass,
+    options: { data: { name, projektname, anschrift, rolle: 'betreuer' } }
+  });
+  if (error){ msg('rg-err', error.message); return; }
+  msg('rg-err','Registriert. Bitte jetzt anmelden.', true);
+  document.getElementById('rg-form').classList.add('hidden');
+  document.getElementById('login-form').classList.remove('hidden');
+  document.getElementById('li-email').value = email;
+};
+document.getElementById('logout').onclick = async () => { await supabase.auth.signOut(); location.reload(); };
+
+/* ---------- Start ---------- */
+async function start(){
+  const { data: sess } = await supabase.auth.getSession();
+  if (!sess.session){ return; }
+  const { data: prof, error } = await supabase.from('profiles').select('*').eq('id', sess.session.user.id).single();
+  if (error || !prof){ alert('Profil nicht gefunden. Bitte erneut registrieren oder Betreuer fragen.'); return; }
+  profile = prof;
+  document.getElementById('login-view').classList.add('hidden');
+  document.getElementById('app-view').classList.remove('hidden');
+  document.getElementById('sub').textContent = (profile.rolle === 'betreuer' ? 'Betreueransicht' : 'Meine Übersicht');
+  await loadData();
+  renderTabs();
+  render();
+}
+async function loadData(){
+  const [items, prices, heute] = await Promise.all([
+    supabase.from('shopping_items').select('*').eq('tenant_id', profile.tenant_id).order('created_at'),
+    supabase.from('price_entries').select('*').eq('tenant_id', profile.tenant_id).order('created_at', { ascending:false }).limit(100),
+    supabase.from('appointments').select('*').eq('tenant_id', profile.tenant_id).eq('datum', dkey(new Date()))
+  ]);
+  S.items = items.data || [];
+  S.prices = prices.data || [];
+  S.heute = heute.data || [];
+}
+function renderTabs(){
+  tabsEl.innerHTML = '';
+  [['heute','Heute'], ['einkauf','Einkauf'], ['preise','Preise'], ['abschluss','Tagesabschluss']].forEach(([id, label]) => {
+    const b = el('button', tab===id ? 'on' : '', label);
+    b.onclick = () => { tab = id; renderTabs(); render(); };
+    tabsEl.appendChild(b);
+  });
+}
+function render(){
+  app.innerHTML = '';
+  ({ heute: tabHeute, einkauf: tabEinkauf, preise: tabPreise, abschluss: tabAbschluss })[tab]();
+}
+
+/* ---------- Tab: Heute ---------- */
+function tabHeute(){
+  const days = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+  app.appendChild(el('h2', null, 'Heute: ' + days[new Date().getDay()]));
+  const card = el('div','card');
+  if (!S.heute.length){
+    card.appendChild(el('p', null, 'Keine Termine für heute eingetragen.'));
+  } else {
+    S.heute.forEach(t => {
+      const row = el('div','item');
+      row.appendChild(el('span', null, (t.uhrzeit || '') + '  ' + (t.thema || t.bereich || 'Termin')));
+      card.appendChild(row);
+    });
+  }
+  app.appendChild(card);
+  app.appendChild(el('div','note', 'Bei Fragen: Nachricht an Betreuer.'));
+}
+
+/* ---------- Tab: Einkauf ---------- */
+function tabEinkauf(){
+  app.appendChild(el('h2', null, 'Einkauf'));
+  app.appendChild(el('p', null, 'Haken = erledigt. Neue Artikel unten eintragen.'));
+  const add = el('div','add');
+  const inp = el('input'); inp.placeholder = 'Neuer Artikel …';
+  const sel = el('select');
+  [['sofort','sofort'],['diese_woche','diese Woche'],['hat_zeit','hat Zeit']].forEach(([v,l]) => { const o = el('option', null, l); o.value = v; sel.appendChild(o); });
+  sel.value = 'diese_woche';
+  const btn = el('button','btn','Hinzufügen');
+  btn.onclick = async () => {
+    const artikel = inp.value.trim(); if (!artikel) return;
+    const { error } = await supabase.from('shopping_items').insert({ tenant_id: profile.tenant_id, artikel, dringlichkeit: sel.value });
+    if (error){ alert(error.message); return; }
+    await log('einkauf_neu', null, { artikel }); inp.value = ''; await loadData(); render();
+  };
+  add.appendChild(inp); add.appendChild(sel); add.appendChild(btn); app.appendChild(add);
+
+  const card = el('div','card');
+  if (!S.items.length){ card.appendChild(el('p', null, 'Noch keine Artikel.')); }
+  S.items.forEach(it => {
+    const row = el('label','item' + (it.erledigt ? ' done' : ''));
+    const cb = el('input'); cb.type = 'checkbox'; cb.checked = it.erledigt;
+    cb.onchange = async () => {
+      await supabase.from('shopping_items').update({ erledigt: cb.checked }).eq('id', it.id).eq('tenant_id', profile.tenant_id);
+      await log(cb.checked ? 'einkauf_erledigt' : 'einkauf_offen', null, { artikel: it.artikel });
+      await loadData(); render();
+    };
+    const body = el('div','body');
+    const txt = el('span','txt', it.artikel + '  (' + ({sofort:'sofort',diese_woche:'diese Woche',hat_zeit:'hat Zeit'}[it.dringlichkeit] || '') + ')');
+    body.appendChild(txt); row.appendChild(cb); row.appendChild(body);
+    card.appendChild(row);
+  });
+  app.appendChild(card);
+}
+
+/* ---------- Tab: Preise (Grundpreis nach Einkauf) ---------- */
+function tabPreise(){
+  app.appendChild(el('h2', null, 'Preise nach dem Einkauf'));
+  app.appendChild(el('p', null, 'Preis, Packungsgröße und Grundpreis vom Regalschild eintragen. Der berechnete Grundpreis erscheint daneben.'));
+  app.appendChild(el('div','note','Grundpreis ist freiwillig. Er hilft, Preise zu vergleichen.'));
+
+  const card = el('div','card');
+  const row = el('div','prow');
+  const iArtikel = el('input'); iArtikel.placeholder = 'Artikel';
+  const iPreis = el('input'); iPreis.type = 'number'; iPreis.step = '0.01'; iPreis.placeholder = 'Preis €';
+  const iGroesse = el('input'); iGroesse.type = 'number'; iGroesse.step = '0.01'; iGroesse.placeholder = 'Packungsgröße';
+  const iEinheit = el('select');
+  [['kg','pro 1 kg'],['g','pro 100 g'],['l','pro 1 l'],['ml','pro 100 ml'],['stueck','Stück']].forEach(([v,l]) => { const o = el('option', null, l); o.value = v; iEinheit.appendChild(o); });
+  const iSchild = el('input'); iSchild.type = 'number'; iSchild.step = '0.01'; iSchild.placeholder = 'Grundpreis Schild (optional)';
+  const res = el('div','res');
+  const hint = el('div','hint');
+  const btn = el('button','btn','Eintragen');
+
+  function berechne(){
+    const preis = parseFloat(iPreis.value), groesse = parseFloat(iGroesse.value), e = iEinheit.value;
+    if (!preis || !groesse){ res.textContent = ''; hint.textContent = ''; return; }
+    let gp;
+    if (e === 'g' || e === 'ml') gp = preis / (groesse / 1000);
+    else gp = preis / groesse;
+    gp = Math.round(gp * 100) / 100;
+    res.textContent = 'Berechnet: ' + gp.toFixed(2) + ' € / ' + (e==='g'||e==='kg'?'kg':(e==='ml'||e==='l'?'l':'Stück'));
+    const schild = parseFloat(iSchild.value);
+    hint.textContent = '';
+    if (schild && Math.abs(schild - gp) > 0.02){
+      hint.textContent = 'Grundpreis weicht ab – gilt das Schild evtl. für eine andere Packungsgröße?';
+    }
+  }
+  [iPreis, iGroesse, iSchild].forEach(x => x.oninput = berechne);
+  iEinheit.onchange = berechne;
+
+  btn.onclick = async () => {
+    const artikel = iArtikel.value.trim();
+    const preis = parseFloat(iPreis.value), groesse = parseFloat(iGroesse.value);
+    if (!artikel || !preis || !groesse){ alert('Artikel, Preis und Größe sind Pflicht.'); return; }
+    const { error } = await supabase.from('price_entries').insert({
+      tenant_id: profile.tenant_id, artikel, preis, packungsgroesse: groesse,
+      einheit: iEinheit.value, grundpreis_schild: parseFloat(iSchild.value) || null,
+      created_by: profile.id
+    });
+    if (error){ alert(error.message); return; }
+    await log('preis_eingetragen', null, { artikel, preis, groesse });
+    iArtikel.value = ''; iPreis.value = ''; iGroesse.value = ''; iSchild.value = ''; res.textContent = ''; hint.textContent = '';
+    await loadData(); render();
+  };
+
+  [iArtikel, iPreis, iGroesse, iEinheit, iSchild].forEach(x => row.appendChild(x));
+  row.appendChild(btn); row.appendChild(res); row.appendChild(hint);
+  card.appendChild(row);
+  app.appendChild(card);
+
+  app.appendChild(el('h3', null, 'Zuletzt eingetragen'));
+  const list = el('div','card');
+  if (!S.prices.length){ list.appendChild(el('p', null, 'Noch keine Preise.')); }
+  S.prices.slice(0, 20).forEach(p => {
+    const r = el('div','item');
+    r.appendChild(el('span', null, p.artikel + ': ' + p.preis.toFixed(2) + ' € für ' + p.packungsgroesse + ' ' + p.einheit + '  →  ' + (p.grundpreis_berechnet ? p.grundpreis_berechnet.toFixed(2) + ' €/Einheit' : '')));
+    list.appendChild(r);
+  });
+  app.appendChild(list);
+}
+
+/* ---------- Tab: Tagesabschluss ---------- */
+function tabAbschluss(){
+  app.appendChild(el('h2', null, 'Tagesabschluss'));
+  app.appendChild(el('p', null, 'Wie war der Tag?'));
+  const mw = el('div','moods');
+  ['gut','okay','schwer','schlecht'].forEach(w => {
+    const b = el('button', S.mood === w ? 'on' : '', w);
+    b.onclick = () => { S.mood = w; render(); };
+    mw.appendChild(b);
+  });
+  app.appendChild(mw);
+  const ta = el('textarea'); ta.rows = 4; ta.placeholder = 'Was war heute? (freiwillig)';
+  app.appendChild(ta);
+  app.appendChild(el('div','note','Bei Fragen: Nachricht an Betreuer.'));
+}
+
+/* ---------- Init ---------- */
+(async () => {
+  const { data } = await supabase.auth.getSession();
+  if (data.session) await start();
+})();
+</script>
 </body>
 </html>
